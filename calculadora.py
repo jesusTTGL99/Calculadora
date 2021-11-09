@@ -1,4 +1,5 @@
 from tkinter import *
+import parser
 
 def get_numbers(num) :
     global indice
@@ -14,12 +15,23 @@ def clear_display() :
     display.delete(0, END)
 
 def undo_display() :
-    statu = display.get()
-    if len(statu) :
+    state = display.get()
+    if len(state) :
         display.delete(0, END)
-        new_statu = statu[: -1]
-        display.insert(0, new_statu)
+        new_state = state[: -1]
+        display.insert(0, new_state)
     else :
+        display.delete(0, END)
+        display.insert(0, "Error")
+
+def calculate() :
+    state = display.get()
+    try :
+        math_expresion = parser.expr(state).compile()
+        result = eval(math_expresion)
+        display.delete(0, END)
+        display.insert(0, result)
+    except :
         display.delete(0, END)
         display.insert(0, "Error")
 
@@ -56,6 +68,6 @@ Button(root, text="exp", command=lambda:get_operation("**")).grid(row=3, column=
 Button(root, text="^2", command=lambda:get_operation("**2")).grid(row=3, column=5, sticky=W+E)
 Button(root, text="(", command=lambda:get_operation("(")).grid(row=4, column=4, sticky=W+E)
 Button(root, text=")", command=lambda:get_operation(")")).grid(row=4, column=5, sticky=W+E)
-Button(root, text="=").grid(row=5, column=4, sticky=W+E, columnspan = 2)
+Button(root, text="=", command=lambda:calculate()).grid(row=5, column=4, sticky=W+E, columnspan = 2)
 
 root.mainloop()
